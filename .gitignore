@@ -1,0 +1,31 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# Java / Maven
+target/
+*.class
+
+# Azure Functions
+local.settings.json
+.azurefunctions/
+.azurefunctions/
+
+# Node.js
+node_modules/
+dist/
+.vite/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# ESP32 / PlatformIO
+.pio/
+.vscode/
+
+# Operating system
+.DS_Store
+Thumbs.db
