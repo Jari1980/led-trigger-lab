@@ -24,6 +24,13 @@
             <version>${azure.functions.java.library.version}</version>
         </dependency>
 
+        <!-- Azure Storage Queue -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-storage-queue</artifactId>
+            <version>12.31.0</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
