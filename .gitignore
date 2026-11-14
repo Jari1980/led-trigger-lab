@@ -12,6 +12,9 @@ local.settings.json
 .azurefunctions/
 .azurefunctions/
 
+# Azurite local storage
+.azurite/
+
 # Node.js
 node_modules/
 dist/
