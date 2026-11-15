@@ -1,10 +1,20 @@
 package se.ledtriggerlab.functions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.QueueTrigger;
 
+import se.ledtriggerlab.model.LedEvent;
+import se.ledtriggerlab.services.LedEventProcessor;
+
 public class LedQueueFunction {
+
+    private static final ObjectMapper OBJECT_MAPPER =
+            new ObjectMapper();
+
+    private final LedEventProcessor processor =
+            new LedEventProcessor();
 
     @FunctionName("LedQueueFunction")
     public void processQueueMessage(
@@ -20,11 +30,21 @@ public class LedQueueFunction {
                     "Received LED event: " + message
             );
 
+            LedEvent event =
+                    OBJECT_MAPPER.readValue(message, LedEvent.class);
+
+            processor.process(event);
+
+            context.getLogger().info(
+                    "Successfully processed LED event: "
+                            + event.getEventId()
+            );
+
         } catch (Exception e) {
 
             context.getLogger().log(
                     java.util.logging.Level.SEVERE,
-                    "FAILED TO PROCESS LED EVENT: " + message,
+                    "Failed to process LED event: " + message,
                     e
             );
 
