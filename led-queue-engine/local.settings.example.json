@@ -1,0 +1,9 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "java",
+    "QueueConnection": "UseDevelopmentStorage=true",
+    "QueueName": "led-queue-experiment"
+  }
+}
