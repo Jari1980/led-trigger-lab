@@ -6,7 +6,9 @@
   },
   "extensions": {
     "queues": {
-      "messageEncoding": "none"
+      "messageEncoding": "none", //This is needed else I get poison message in Azure storage queue.
+      "batchSize": 1, //Get 1 message at time per function instance.
+      "newBatchThreshold": 0 //Does not get new batch while processing current batch.
     }
   }
 }

@@ -22,5 +22,16 @@ public class LedEventProcessor {
                         + ", LED: "
                         + event.getLedId()
         );
+
+        try {
+            Thread.sleep(5000);
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+
+            throw new RuntimeException(
+                    "LED event processing was interrupted", e
+            );
+        }
     }
 }
