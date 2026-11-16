@@ -1,0 +1,14 @@
+{
+  "version": "2.0",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "[4.*, 5.0.0)"
+  },
+  "extensions": {
+    "queues": {
+      "messageEncoding": "none", //This is needed else I get poison message in Azure storage queue.
+      "batchSize": 1, //Get 1 message at time per function instance.
+      "newBatchThreshold": 0 //Does not get new batch while processing current batch.
+    }
+  }
+}
