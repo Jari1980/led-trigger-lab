@@ -5,6 +5,7 @@
     "FUNCTIONS_WORKER_RUNTIME": "java",
     "QueueConnection": "UseDevelopmentStorage=true",
     "LedQueueName": "led-queue-experiment",
-    "TimerQueueName": "led-timer-experiment"
+    "TimerQueueName": "led-timer-experiment",
+    "TableConnection": "UseDevelopmentStorage=true"
   }
 }

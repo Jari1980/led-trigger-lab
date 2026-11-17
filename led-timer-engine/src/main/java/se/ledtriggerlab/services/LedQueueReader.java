@@ -8,12 +8,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.functions.ExecutionContext;
 
 import se.ledtriggerlab.model.LedEvent;
+import se.ledtriggerlab.model.ExperimentResult;
+import se.ledtriggerlab.services.LedEventProcessor;
+import se.ledtriggerlab.services.ExperimentResultPublisher;
+
+import java.time.Instant;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LedQueueReader {
 
     private final QueueClient queueClient;
     private final ObjectMapper objectMapper;
     private final LedEventProcessor processor;
+    private final ExperimentResultPublisher resultPublisher;
+
+    private static final AtomicInteger PROCESSING_ORDER =
+            new AtomicInteger(0);
 
     public LedQueueReader() {
 
@@ -29,8 +39,13 @@ public class LedQueueReader {
                 .serviceVersion(QueueServiceVersion.V2025_11_05)
                 .buildClient();
 
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = new ObjectMapper()
+                .findAndRegisterModules();
+
         this.processor = new LedEventProcessor();
+
+        this.resultPublisher =
+                new ExperimentResultPublisher("TIMER");
     }
 
     public void processNextMessage(ExecutionContext context) {
@@ -57,7 +72,46 @@ public class LedQueueReader {
                     LedEvent.class
             );
 
+            Instant receivedAt = Instant.now();
+
+            long startTime = System.nanoTime();
+
             processor.process(event);
+
+            long processingDurationMs =
+                    (System.nanoTime() - startTime) / 1_000_000;
+
+            Instant processedAt = Instant.now();
+
+            ExperimentResult result = new ExperimentResult();
+
+            result.setExperimentId(event.getExperimentId());
+            result.setEventId(event.getEventId());
+            result.setEngineType("TIMER");
+            result.setLedId(event.getLedId());
+
+            result.setPublishedAt(
+                    Instant.parse(event.getPublishedAt())
+            );
+            result.setReceivedAt(receivedAt);
+            result.setProcessedAt(processedAt);
+
+            result.setProcessingDurationMs(
+                    processingDurationMs
+            );
+
+            result.setProcessingOrder(
+                    PROCESSING_ORDER.incrementAndGet()
+            );
+
+            resultPublisher.publish(result);
+
+            context.getLogger().info(
+                    "Experiment result published. Event: "
+                            + event.getEventId()
+                            + ", Duration: "
+                            + processingDurationMs + " ms"
+            );
 
             queueClient.deleteMessage(
                     message.getMessageId(),

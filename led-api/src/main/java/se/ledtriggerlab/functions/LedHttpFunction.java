@@ -11,6 +11,7 @@ import com.microsoft.azure.functions.*;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
+import java.time.Instant;
 
 /**
  * Azure Functions with HTTP Trigger.
@@ -60,9 +61,22 @@ public class LedHttpFunction {
 
         String eventId = UUID.randomUUID().toString();
 
+        String experimentId =
+                (String) body.get("experimentId");
+
+        if (experimentId == null || experimentId.isBlank()) {
+            return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
+                    .body("Missing experimentId")
+                    .build();
+        }
+
+        String publishedAt = Instant.now().toString();
+
         Map<String, Object> event = Map.of(
                 "eventId", eventId,
-                "ledId", ledId
+                "experimentId", experimentId,
+                "ledId", ledId,
+                "publishedAt", publishedAt
         );
 
         try {
