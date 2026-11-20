@@ -86,6 +86,8 @@ public class LedHttpFunction {
             QueueConfiguration configuration =
                     new QueueConfiguration();
 
+            configuration.verifyQueues();
+
             LedEventPublisher publisher =
                     new LedEventPublisher(
                             configuration.getLedQueueClient(),

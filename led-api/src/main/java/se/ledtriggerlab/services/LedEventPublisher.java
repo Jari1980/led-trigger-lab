@@ -13,6 +13,9 @@ public class LedEventPublisher {
 
         this.ledQueueClient = ledQueueClient;
         this.timerQueueClient = timerQueueClient;
+
+        this.ledQueueClient.createIfNotExists();
+        this.timerQueueClient.createIfNotExists();
     }
 
     public void publish(String eventMessage) {

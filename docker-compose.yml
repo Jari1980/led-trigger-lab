@@ -1,0 +1,96 @@
+services:
+
+  # Azure Storage Emulator
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    container_name: azurite
+    command: >
+      azurite
+      --blobHost 0.0.0.0
+      --queueHost 0.0.0.0
+      --tableHost 0.0.0.0
+      --location /data
+      --debug /data/debug.log
+      --silent
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    volumes:
+      - azurite-data:/data
+    networks:
+      - led-network
+
+  # React frontend
+  frontend:
+    build:
+      context: ./frontend
+    container_name: led-trigger-lab-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - led-api
+    networks:
+      - led-network
+    restart: unless-stopped
+
+  # LED API
+  led-api:
+    build:
+      context: ./led-api
+    container_name: led-api
+    environment:
+      AzureWebJobsStorage: "${AZURITE_CONNECTION}"
+      FUNCTIONS_WORKER_RUNTIME: java
+      QueueConnection: "${AZURITE_CONNECTION}"
+      LedQueueName: led-queue-experiment
+      TimerQueueName: led-timer-experiment
+      TableConnection: "${AZURITE_CONNECTION}"
+    depends_on:
+      - azurite
+    networks:
+      - led-network
+    restart: unless-stopped
+
+  # LED Queue Engine
+  led-queue-engine:
+    build:
+      context: ./led-queue-engine
+    container_name: led-queue-engine
+    environment:
+      AzureWebJobsStorage: "${AZURITE_CONNECTION}"
+      FUNCTIONS_WORKER_RUNTIME: java
+      QueueConnection: "${AZURITE_CONNECTION}"
+      TableConnection: "${AZURITE_CONNECTION}"
+      LedQueueName: led-queue-experiment
+      TimerQueueName: led-timer-experiment
+    depends_on:
+      - azurite
+    networks:
+      - led-network
+    restart: unless-stopped
+
+  # LED Timer Engine
+  led-timer-engine:
+    build:
+      context: ./led-timer-engine
+    container_name: led-timer-engine
+    environment:
+      AzureWebJobsStorage: "${AZURITE_CONNECTION}"
+      FUNCTIONS_WORKER_RUNTIME: java
+      QueueConnection: "${AZURITE_CONNECTION}"
+      TableConnection: "${AZURITE_CONNECTION}"
+      LedQueueName: led-queue-experiment
+      TimerQueueName: led-timer-experiment
+    depends_on:
+      - azurite
+    networks:
+      - led-network
+    restart: unless-stopped
+
+networks:
+  led-network:
+    driver: bridge
+
+volumes:
+  azurite-data:

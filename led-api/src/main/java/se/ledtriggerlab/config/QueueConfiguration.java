@@ -51,7 +51,7 @@ public class QueueConfiguration {
     }
 
     public void verifyQueues() {
-        ledQueueClient.getProperties();
-        timerQueueClient.getProperties();
+        ledQueueClient.createIfNotExists();
+        timerQueueClient.createIfNotExists();
     }
 }
