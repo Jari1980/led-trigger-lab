@@ -120,4 +120,5 @@ Storage Explorer allows you to:
 - Verify that messages are published and processed correctly.
 
 ### Image of UI and storage explorer
-<img width="2366" height="945" alt="LedTriggerLab Image processing triggers" src="https://github.com/user-attachments/assets/97b0df42-965d-4b83-9dd1-e49e483c182b" />
+<img width="2366" height="945" alt="LedTriggerLab Image processing triggers" src="https://github.com/user-attachments/assets/73aff6ea-e538-4dac-8512-26fb476ef9e4" />
+
