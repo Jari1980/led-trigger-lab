@@ -15,6 +15,10 @@ local.settings.json
 # Azurite local storage
 .azurite/
 
+# Azurite local data
+AzuriteConfig
+__azurite_*
+
 # Node.js
 node_modules/
 dist/
